@@ -1,95 +1,103 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { Logo, PageData } from "@/types/page";
+import { Protocol } from "@/types/protocol";
+import { useState } from "react";
+import styles from "./page.module.css";
+import Link from "next/link";
+import Image from "next/image";
+import DEFILogo from "@/assets/logo.svg";
 
 export default function Home() {
+  const data = pageData();
+  const [logos, setLogos] = useState<Logo[]>([]);
+  const [count, setCount] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+
+  data.then((data) => {
+    setLogos(data.logos);
+    setCount(data.count);
+  });
+
+  const filteredLogos = logos.filter((logo) =>
+    logo.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "100%",
+        }}
+      >
         <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
+          src={DEFILogo}
+          width="100"
+          height="100"
+          alt="DEFI Sites"
+          style={{
+            aspectRatio: "1/1",
+            width: "100%",
+            height: "auto",
+          }}
         />
       </div>
 
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
+      {filteredLogos.map(({ logo, name, url }) => {
+        return (
+          <Link
+            href={url}
+            target="_blank"
+            title={name}
+            key={name}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            <Image
+              src={logo}
+              alt={name}
+              width="100"
+              height="100"
+              style={{
+                aspectRatio: "1/1",
+                width: "100%",
+                height: "auto",
+              }}
+            />
+          </Link>
+        );
+      })}
     </main>
-  )
+  );
 }
+
+export const getProtocols = async (): Promise<Protocol[]> => {
+  const response = await fetch("https://api.llama.fi/protocols");
+  const protocols = (await response.json()) as Protocol[];
+  return protocols;
+};
+
+export const pageData = async (): Promise<PageData> => {
+  const protocols = await getProtocols();
+  const logos = protocols.map((protocol) => {
+    return {
+      name: protocol.name,
+      logo: protocol.logo,
+      url: protocol.url,
+    };
+  });
+
+  return {
+    logos,
+    count: protocols.length,
+  };
+};
