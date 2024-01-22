@@ -80,13 +80,13 @@ export default function Home() {
   );
 }
 
-export const getProtocols = async (): Promise<Protocol[]> => {
+const getProtocols = async (): Promise<Protocol[]> => {
   const response = await fetch("https://api.llama.fi/protocols");
   const protocols = (await response.json()) as Protocol[];
   return protocols;
 };
 
-export const pageData = async (): Promise<PageData> => {
+const pageData = async (): Promise<PageData> => {
   const protocols = await getProtocols();
   const logos = protocols.map((protocol) => {
     return {
