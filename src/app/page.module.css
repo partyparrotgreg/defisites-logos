@@ -8,11 +8,17 @@
 .inputField {
   margin: 0;
   padding: 0 2rem;
-  font-size: 3rem;
+  font-size: 2rem;
   width: 100%;
   height: 100%;
-  background-color: #ccc;
+  background-color: #00FA9A;
   border: none;
   border-radius: 0px;
   vertical-align: middle;
+}
+.inputField:focus {
+  outline: none;
+}
+.inputField::placeholder {
+  color: #0e6343
 }

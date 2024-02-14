@@ -19,9 +19,11 @@ export default function Home() {
     setCount(data.count);
   });
 
-  const filteredLogos = logos.filter((logo) =>
-    logo.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLogos = logos
+    .filter((logo) =>
+      logo.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(0, 10);
 
   return (
     <main className={styles.main}>
@@ -43,6 +45,23 @@ export default function Home() {
             aspectRatio: "1/1",
             width: "100%",
             height: "auto",
+          }}
+        />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "red",
+          gridColumn: "2 / span 3",
+        }}
+      >
+        <input
+          className={styles.inputField}
+          placeholder="search..."
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
           }}
         />
       </div>
