@@ -19,11 +19,9 @@ export default function Home() {
     setCount(data.count);
   });
 
-  const filteredLogos = logos
-    .filter((logo) =>
-      logo.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .slice(0, 10);
+  const filteredLogos = logos.filter((logo) =>
+    logo.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <main className={styles.main}>
